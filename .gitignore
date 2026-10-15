@@ -1,0 +1,21 @@
+# ---- 大文件 / 构建产物（备份只保留源码与工作产物）----
+ideaIC.zip
+idea-sdk/
+lib/
+build/
+target/
+build-classes-test/
+*.log
+.sql-locator-index
+
+# ---- IDE / 系统 ----
+.idea/
+*.iml
+.DS_Store
+
+# ---- 工具内部目录（缓存/记忆，非源码）----
+.workbuddy/
+
+# ---- 本地编译产物 / 临时诊断文件 ----
+repro/out/
+root_check.txt

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.capital.mapper.InsuranceLoanMapper">
+  <select id="queryInsuranceLoanTransInfo" resultType="map">
+    <![CDATA[
+    SELECT t.PRODUCT_ID, t.ORGAN_CODE, COUNT(*) AS CNT
+    FROM capital.capital_insurance_invoice t
+    WHERE t.CREATE_TIME >= :1 - (:2 /1440) AND t.CREATE_TIME <= :3 - (:4 /1440)
+    GROUP BY t.PRODUCT_ID, t.ORGAN_CODE
+    ]]>
+  </select>
+</mapper>

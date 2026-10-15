@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.loc</groupId>
+    <artifactId>sql-locator</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <artifactId>sql-locator-core</artifactId>
+  <packaging>jar</packaging>
+  <name>sql-locator-core</name>
+
+  <!-- 纯 JDK 标准库，不引入任何第三方依赖 -->
+  <dependencies/>
+</project>

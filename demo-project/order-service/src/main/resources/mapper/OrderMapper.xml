@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.order.OrderMapper">
+
+    <!-- 用例 T6：多表 JOIN（t_order + t_user） -->
+    <select id="selectOrderWithUser" resultType="map">
+        SELECT o.id, o.order_no, u.name
+        FROM t_order o
+                 JOIN t_user u ON o.user_id = u.id
+        WHERE o.id = #{id}
+    </select>
+
+    <!-- 用例 T7：单表 t_order（与 T6 同表、语句不同 → 骨架一致） -->
+    <select id="selectOrderById" resultType="com.demo.order.Order">
+        SELECT o.id, o.order_no, o.amount, o.status
+        FROM t_order o
+        WHERE o.id = #{id}
+    </select>
+
+    <!-- 用例 T10：foreach 生成 IN (?,?,?) -->
+    <select id="selectItemsByIds" resultType="com.demo.order.OrderItem">
+        SELECT i.id, i.order_id, i.sku
+        FROM t_order_item i
+        WHERE i.id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+
+    <!-- 用例 T8：UPDATE -->
+    <update id="updateOrderAmount">
+        UPDATE t_order
+        SET amount      = #{amount},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

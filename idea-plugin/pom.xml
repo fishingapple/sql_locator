@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.loc</groupId>
+    <artifactId>sql-locator</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <artifactId>sql-locator-idea-plugin</artifactId>
+  <packaging>jar</packaging>
+  <name>sql-locator-idea-plugin</name>
+  <description>IntelliJ IDEA 插件：右键菜单 / Tools 菜单定位慢 SQL</description>
+
+  <properties>
+    <idea.version>2023.2</idea.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.loc</groupId>
+      <artifactId>sql-locator-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.jetbrains.intellij.idea</groupId>
+      <artifactId>ideaIC</artifactId>
+      <version>${idea.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jetbrains.intellij.idea</groupId>
+      <artifactId>annotations</artifactId>
+      <version>${idea.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jetbrains.intellij</groupId>
+        <artifactId>intellij-maven-plugin</artifactId>
+        <version>1.16.0</version>
+        <configuration>
+          <ideaVersion>${idea.version}</ideaVersion>
+          <pluginName>Slow SQL Locator</pluginName>
+          <downloadSources>false</downloadSources>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-plugin-jar</id>
+            <phase>package</phase>
+            <goals><goal>single</goal></goals>
+            <configuration>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <archive>
+                <manifestEntries>
+                  <Implementation-Title>${project.name}</Implementation-Title>
+                  <Implementation-Version>${project.version}</Implementation-Version>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>intellij-repository</id>
+      <url>https://www.jetbrains.com/intellij-repository/releases</url>
+    </repository>
+    <repository>
+      <id>intellij-third-party</id>
+      <url>https://cache-redirector.jetbrains.com/intellij-dependencies</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>intellij-plugin-repository</id>
+      <url>https://plugins.jetbrains.com/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+</project>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.user.UserMapper">
+
+    <!-- 用例 T1：指纹命中（按主键查询单表） -->
+    <select id="selectUserById" resultType="com.demo.user.User">
+        SELECT u.id, u.name, u.email
+        FROM t_user u
+        WHERE u.id = #{id}
+    </select>
+
+    <!-- 用例 T5：动态标签 <if> 会被归一化剥离 -->
+    <select id="selectActiveUsers" resultType="com.demo.user.User">
+        SELECT u.id, u.name, u.email
+        FROM t_user u
+        WHERE u.status = 1
+        <if test="keyword != null and keyword != ''">
+            AND u.name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+    </select>
+
+    <!-- 用例 T2：指纹命中（UPDATE） -->
+    <update id="updateUserStatus">
+        UPDATE t_user
+        SET status      = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 用例 T3：指纹命中（INSERT） -->
+    <insert id="insertUser">
+        INSERT INTO t_user (id, name, email, status)
+        VALUES (#{id}, #{name}, #{email}, #{status})
+    </insert>
+
+    <!-- 用例 T4：指纹命中（DELETE） -->
+    <delete id="deleteUserById">
+        DELETE
+        FROM t_user
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

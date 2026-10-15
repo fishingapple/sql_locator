@@ -1,0 +1,46 @@
+<idea-plugin>
+  <id>com.loc.sql-locator</id>
+  <name>Slow SQL Locator</name>
+  <version>1.7</version>
+  <vendor>DBA</vendor>
+  <!-- since-build=193 (2019.3) 起；不设 until-build，覆盖 2025.3 (253) 及后续版本。
+       插件字节码为 Java 8 (v52)，可在 JBR 8/11/17/21 上加载。 -->
+  <idea-version since-build="193"/>
+  <depends>com.intellij.modules.platform</depends>
+
+  <description><![CDATA[
+<b>Slow SQL Locator</b> —— 把慢 SQL 定位到 MyBatis Mapper XML / 注解的代码位置。
+
+<b>核心能力</b>
+<ul>
+  <li>支持 IntelliJ IDEA 插件（右键菜单 / 快捷键 Ctrl+Alt+Q / 右侧工具窗口）与命令行两种方式</li>
+  <li>对源码只读扫描，不修改任何文件；首个项目根无索引时自动全量构建</li>
+  <li>多级匹配：指纹命中 &gt; 骨架(表集合)一致 &gt; 表重合，并对每条结果给出 0~1 的匹配程度</li>
+</ul>
+
+<b>版本变更</b>
+<ul>
+  <li>v1.7：工具窗口新增「重建索引」按钮，可手动全量重扫源码重建索引（替换缓存，下次查询即命中新索引）</li>
+  <li>v1.6：结果弹窗补充每条结果与输入的匹配程度（0~1）；完善插件简介，后续每次发版迭代</li>
+  <li>v1.5：工具窗口布局重排（历史列表｜详情左右并排 + 底部 SQL 输入框与按钮）；详情框展示每条命中的 key/path/line/评分；快捷键改为 Ctrl+Alt+Q</li>
+  <li>v1.5.1：修复表名带 schema 前缀（如 CAPITAL.TABLE）时被截断、误把 schema 当表名导致跨表误匹配；修复动态标签 test 属性含 &gt; 时剥离残留</li>
+  <li>v1.4：精准匹配增强——语句类型硬过滤（SELECT 不混 UPDATE/INSERT/DELETE）、WHERE 条件列集合精确相等（忽略顺序与别名）、JOIN 表集合与 ON 等式一致；别名不影响列识别</li>
+  <li>v1.3：修复“表名不一致也被搜出”，引入主表一致约束；增加后台进度条与异常弹窗</li>
+  <li>v1.0~v1.2：基础索引构建、自动重建、只读审计、演示工程</li>
+</ul>
+]]></description>
+
+  <actions>
+    <action id="com.loc.LocateSqlAction" class="com.loc.LocateSqlAction"
+            text="Locate Slow SQL" description="定位慢SQL到代码位置">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt Q"/>
+    </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="Slow SQL Locator" anchor="right" icon="/icons/sql-locator.svg"
+                factoryClass="com.loc.SqlLocatorToolWindowFactory"/>
+  </extensions>
+</idea-plugin>

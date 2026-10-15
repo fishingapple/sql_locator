@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.UserMapper">
+    <select id="selectUser" resultType="map">
+        SELECT u.id, u.name, u.email
+        FROM t_user u
+        WHERE u.status = #{status}
+        <if test="keyword != null">
+            AND u.name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+    </select>
+
+    <update id="updateOrderStatus" parameterType="map">
+        UPDATE t_order
+        SET status = #{status}, update_time = NOW()
+        WHERE order_id = #{orderId}
+    </update>
+
+    <insert id="insertLog" parameterType="map">
+        INSERT INTO t_log (user_id, action, create_time)
+        VALUES (#{userId}, #{action}, NOW())
+    </insert>
+</mapper>

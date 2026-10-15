@@ -1,0 +1,9 @@
+# 插件运行时生成的索引与历史（可安全删除，下次使用会自动重建）
+.sql-locator-index
+.sql-locator-history
+
+# 编译产物
+target/
+build/
+out/
+*.class

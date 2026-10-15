@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.loc</groupId>
+    <artifactId>sql-locator</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <artifactId>sql-locator-idea</artifactId>
+  <packaging>jar</packaging>
+  <name>sql-locator-idea-plugin</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.loc</groupId>
+      <artifactId>sql-locator-core</artifactId>
+    </dependency>
+
+    <!--
+      IDEA 平台 API：仅编译期需要，运行时由宿主 IDE 提供。
+      方式一（推荐）：用环境变量 IDEA_HOME 指向本机安装目录。
+      方式二：如果公司内网有私服镜像了 intellij SDK，改成普通 dependency 即可。
+    -->
+    <dependency>
+      <groupId>com.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jetbrains</groupId>
+      <artifactId>platform-api</artifactId>
+      <version>${idea.version}</version>
+      <scope>system</scope>
+      <systemPath>${env.IDEA_HOME}/lib/platform-api.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>com.jetbrains</groupId>
+      <artifactId>intellij-platform-core</artifactId>
+      <version>${idea.version}</version>
+      <scope>system</scope>
+      <systemPath>${env.IDEA_HOME}/lib/intellij.platform.core.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>com.jetbrains</groupId>
+      <artifactId>extensions</artifactId>
+      <version>${idea.version}</version>
+      <scope>system</scope>
+      <systemPath>${env.IDEA_HOME}/lib/extensions.jar</systemPath>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- 把 core 一起 unpack 进来，保证插件 jar 自包含 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <id>unpack-core</id>
+            <phase>prepare-package</phase>
+            <goals><goal>unpack</goal></goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.loc</groupId>
+                  <artifactId>sql-locator-core</artifactId>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 打成插件 zip：META-INF/plugin.xml + lib/*.jar -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <finalName>slow-sql-locator</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>src/assembly/plugin.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals><goal>single</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

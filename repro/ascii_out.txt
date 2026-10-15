@@ -1,0 +1,41 @@
+================ ?? A?monitor / trans-info ??? ================
+--- ???????fp/skelKey/whereColsKey/joinKeys?---
+key=com.capital.mapper.InsuranceLoanMapper.queryInsuranceLoanTransSuccessRate type=SELECT line=4
+   fp=88bd3c37fdd9
+   skelKey=CAPITAL.CAPITAL_INSURANCE_INVOICE:T
+   whereColsKey=CREATE_TIME
+   joinTablesKey=[] joinOnKey=[]
+key=com.capital.mapper.InsuranceLoanMapper.queryInsuranceLoanTransInfo type=SELECT line=4
+   fp=0a9da684bfa9
+   skelKey=CAPITAL.CAPITAL_INSURANCE_INVOICE:T
+   whereColsKey=CREATE_TIME
+   joinTablesKey=[] joinOnKey=[]
+
+--- ?? SQL ??? ---
+SELECT T.PRODUCT_ID, T.ORGAN_CODE, COUNT(*) CNT FROM CAPITAL.CAPITAL_INSURANCE_INVOICE T WHERE T.CREATE_TIME >= :1 - (:2 /1440) AND T.CREATE_TIME <= :3 - (:4 /1440) GROUP BY T.PRODUCT_ID, T.ORGAN_CODE
+query skelKey      = CAPITAL.CAPITAL_INSURANCE_INVOICE:T
+query whereColsKey = CREATE_TIME
+
+--- search ???? level/score ???topN=8?---
+  level=2 score=0.90  com.capital.mapper.InsuranceLoanMapper.queryInsuranceLoanTransSuccessRate @ CapitalMonitorMapper.xml:4
+  level=2 score=0.90  com.capital.mapper.InsuranceLoanMapper.queryInsuranceLoanTransInfo @ CapitalTransInfoMapper.xml:4
+
+>>> WHY: two DIFFERENT statements (one has GROUP BY+arithmetic, one does not) BOTH score 0.85 'skeleton-match'.
+>>>      fp differs (not a fingerprint hit), yet the L2 signature (table-set + filter-cols + join) collides
+>>>      -> tie broken by index order; the monitor indexed first is surfaced as a strong match, correct trans-info pushed aside.
+
+
+================ ??1?skeleton ?????? / ???? ================
+SQL(???): SELECT X.COL FROM (SELECT A.COL FROM REAL_T A WHERE A.ID=:1) X JOIN OTHER_T Y ON X.ID=Y.ID WHERE Y.FLAG=:2
+skeleton    = [REAL_T:A, OTHER_T:Y]
+primary     = REAL_T
+>>> WHY: outer FROM is an inline view x (a subquery), yet skeleton treats the subquery's REAL_T as the primary table;
+>>>      if another mapper's real primary is OTHER_T, their primaries differ -> L3 'primary-match' filter misfires (kills or keeps wrongly).
+
+
+================ ??2?whereColumns ??????? WHERE?UNION ?????================
+SQL(???): SELECT A FROM T1 WHERE A.X=:1 UNION SELECT B FROM T2 WHERE B.Y=:2
+whereCols   = X
+>>> WHY: the second UNION branch's WHERE b.y=:2 is dropped entirely; the filter-column signature is incomplete,
+>>>      which can both miss a true match (expected y but not counted) and cause false equality elsewhere.
+RUN_EXIT=0

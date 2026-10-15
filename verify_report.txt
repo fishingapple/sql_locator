@@ -1,0 +1,12 @@
+ZIP entries: 5
+plugin.xml <version>1.7</version>
+has v1.7 note: True
+com/loc/LocateSqlAction.class in jar: True
+com/loc/SqlLocatorToolWindowFactory.class in jar: True
+com/loc/LocatorEngine.class in jar: True
+LocateSqlAction.class major version: 52 (52=Java8)
+rebuildIndex in LocateSqlAction.class: True
+rebuild button text in toolwindow: True
+RESULT: PASS
+PY_EXIT=0
+ROOT_SYNC_DONE
